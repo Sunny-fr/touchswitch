@@ -3,31 +3,55 @@
 var eventMode = "mouse"
 
 //Listing touch devices user agents
-var UA_touchDevices = ["iPhone","iPod","iPad","Android"] ;
+var UA_touchDevices = ["iPhone","iPod","iPad","Android", "Windows Phone"];
 
 // trigger events 
 var events = {
-        touch : {
+       touch : {
                 start : "touchstart",
                 move : "touchmove",
                 end : "touchend",
                 pageX : function(e){ return e.originalEvent.touches[0].pageX ;},
                 pageY : function(e){ return e.originalEvent.touches[0].pageY ;}
-        },
-        mouse : {
+            },
+            mouse : {
                 start : "mousedown",
                 move : "mousemove",
                 end : "mouseup",
                 pageX : function(e){ return e.pageX ;},
                 pageY : function(e){ return e.pageY ;}
-        }
+            },
+            mstouch : {
+                start : "touchstart",
+                move : "touchmove",
+                end : "touchend",
+                pageX : function(e){ return e.targetTouches[0].pageX ;},
+                pageY : function(e){ return e.targetTouches[0].pageY ;}
+            },
+            mstouchpointer : {
+                start : "MSPointerDown",
+                move : "MSPointerMove",
+                end : "MSPointerUp",
+                pageX : function(e){ return e.pageX || e.targetTouches[0].pageX ;},
+                pageY : function(e){ return e.pageY || e.targetTouches[0].pageY ;}
+            }
 };
 
-//Don't forget, only on dom ready !
 var setEventMode = function (){
-	for (var i = 0; i < UA_touchDevices.length; i++) {
-		if(navigator.userAgent.indexOf(UA_touchDevices[i]) != -1) eventMode = "touch";
-	};
+	 for (var i = 0; i < UA_touchDevices.length; i++) {
+        if (navigator.userAgent.indexOf(UA_touchDevices[i]) != -1)
+        {
+            eventMode = "touch";
+            if (navigator.userAgent.indexOf(UA_touchDevices[3]) != -1)  isAndroid = true ;
+        }
+
+    };
+    if (navigator.userAgent.indexOf("Windows Phone") != -1) {
+        eventMode = "mstouch";
+        if (window.navigator.msPointerEnabled) {
+             eventMode = "mstouchpointer";
+        }
+    }
 }
 
 $(function(){
@@ -78,6 +102,7 @@ $(function(){
 		tempEvents.prevY = events[eventMode].pageY(e) ;
 		tempEvents.ballX = $currentObject.position().left;
 		tempEvents.ballY = $currentObject.position().top ;
+		
 		$currentObject.on(events[eventMode].move, onMove);
 
 		//
@@ -92,8 +117,8 @@ $(function(){
 	}
 
 
-	$(".ball").on(events[eventMode].end, onEnd );
-	$(".ball").on(events[eventMode].start, onStart);
+	$("body").on(events[eventMode].end,".ball", onEnd );
+	$("body").on(events[eventMode].start,".ball", onStart);
 
 
 
