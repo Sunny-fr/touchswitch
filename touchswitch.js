@@ -54,73 +54,72 @@ var setEventMode = function (){
     }
 }
 
-$(function(){
-	//Don't forget, only on dom ready !
-	setEventMode();
+
+setEventMode();
 
 
-	// Now events[eventMode].start will trigger the right event ;-)
+// Now events[eventMode].start will trigger the right event ;-)
 
-	// Example for fun ;-)
+// Example for fun ;-)
 
-	var $currentObject ;
+var $currentObject ;
 
-	var mnmsColors = ["#d72e2e","#3978e0","#7ed85e","#feab1a","#b7dd43","#dd2b2b"]
-
-
-	for (var i = 0; i < 24; i++) {
-		$("<div class='ball'><strong>m</strong></div>")
-		.css({
-			"left": Math.round(Math.random()*500),
-			"top": Math.round(Math.random()*200),
-			"background-color" : mnmsColors[Math.round(Math.random()* (mnmsColors.length-1))]
-		})
-		.appendTo(".viewport") ;
-	};
-
-	var tempEvents = {
-		"prevX" : 0 ,
-		"prevY" : 0 ,
-		"ballX" : 0 ,
-		"ballY" : 0
-
-	}
+var mnmsColors = ["#d72e2e","#3978e0","#7ed85e","#feab1a","#b7dd43","#dd2b2b"]
 
 
-	var onMove = function(e){
-		$currentObject.css({
-			"left": 	tempEvents.ballX - ( tempEvents.prevX - events[eventMode].pageX(e)  ) , 
-			"top":  	tempEvents.ballY - ( tempEvents.prevY - events[eventMode].pageY(e)  ) 
-		}) ;
+for (var i = 0; i < 24; i++) {
+	$("<div class='ball'><strong>m</strong></div>")
+	.css({
+		"left": Math.round(Math.random()*500),
+		"top": Math.round(Math.random()*200),
+		"background-color" : mnmsColors[Math.round(Math.random()* (mnmsColors.length-1))]
+	})
+	.appendTo(".viewport") ;
+};
 
-		e.preventDefault();
-	}
+var tempEvents = {
+	"prevX" : 0 ,
+	"prevY" : 0 ,
+	"ballX" : 0 ,
+	"ballY" : 0
 
-	var onStart = function(e){
-		$currentObject = $(this) ;
-		tempEvents.prevX = events[eventMode].pageX(e) ;
-		tempEvents.prevY = events[eventMode].pageY(e) ;
-		tempEvents.ballX = $currentObject.position().left;
-		tempEvents.ballY = $currentObject.position().top ;
-		
-		$currentObject.on(events[eventMode].move, onMove);
-
-		//
-		$(".ball").css({"z-index":1}) ;
-		$currentObject.css({"z-index":10}) ;
-
-	}
-
-	var onEnd = function(e){
-		
-		$currentObject.off(events[eventMode].move, onMove);
-	}
+}
 
 
-	$("body").on(events[eventMode].end,".ball", onEnd );
-	$("body").on(events[eventMode].start,".ball", onStart);
+var onMove = function(e){
+	$currentObject.css({
+		"left": 	tempEvents.ballX - ( tempEvents.prevX - events[eventMode].pageX(e)  ) , 
+		"top":  	tempEvents.ballY - ( tempEvents.prevY - events[eventMode].pageY(e)  ) 
+	}) ;
+
+	e.preventDefault();
+}
+
+var onStart = function(e){
+	$currentObject = $(this) ;
+	tempEvents.prevX = events[eventMode].pageX(e) ;
+	tempEvents.prevY = events[eventMode].pageY(e) ;
+	tempEvents.ballX = $currentObject.position().left;
+	tempEvents.ballY = $currentObject.position().top ;
+	
+	$currentObject.on(events[eventMode].move, onMove);
+
+	//
+	$(".ball").css({"z-index":1}) ;
+	$currentObject.css({"z-index":10}) ;
+
+}
+
+var onEnd = function(e){
+	
+	$currentObject.off(events[eventMode].move, onMove);
+}
+
+
+$("body").on(events[eventMode].end,".ball", onEnd );
+$("body").on(events[eventMode].start,".ball", onStart);
 
 
 
-})
+
 
